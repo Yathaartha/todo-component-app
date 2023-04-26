@@ -1,5 +1,7 @@
 package com.example.todocomponentapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +11,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
     private ArrayList<Todo> data;
+    private Context context;
 
-    public TodoAdapter(ArrayList<Todo> data) {
+    public TodoAdapter(ArrayList<Todo> data, Context context) {
         this.data = data;
+        this.context = context;
     }
 
     @NonNull
@@ -37,7 +42,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         return data.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView titleTextView;
         private TextView detailTextView;
@@ -46,11 +51,20 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.title);
             detailTextView = itemView.findViewById(R.id.detail);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Todo todo) {
             titleTextView.setText(todo.getTitle());
             detailTextView.setText(todo.getDetail());
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getLayoutPosition();
+            UUID id = data.get(position).getId();
+            Intent intent = TodoPagerActivity.makeIntent(context, id);
+            context.startActivity(intent);
         }
     }
 }
